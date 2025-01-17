@@ -1,0 +1,96 @@
+#!/bin/bash
+
+help_message="cat-repo: A script to display files in a specified Git repository
+Usage: cat-repo [OPTIONS] [REPO_PATH] [PATTERN]
+Options:
+  -h    Display this help message
+Arguments:
+  REPO_PATH  The path to the Git repository (if not provided, current directory is used)
+  PATTERN    When specified, only files matching the given pattern will be processed."
+
+if [ "$1" == "-h" ]; then
+  echo "$help_message"
+  exit 0
+fi
+
+# Function to check if the current directory is inside a Git repository
+is_inside_git_repo() {
+  git rev-parse --is-inside-work-tree >/dev/null 2>&1
+}
+
+# Save the current directory
+original_dir=$(pwd)
+
+# Check if a repository path is provided
+if [ "$1" != "" ]; then
+  repo_path="$1"
+  shift
+  cd "$repo_path" || { echo "Failed to change directory to $repo_path"; exit 1; }
+
+  if ! is_inside_git_repo; then
+    echo "Error: The specified path is not inside a valid Git repository."
+    cd "$original_dir"
+    exit 1
+  fi
+else
+  # Use the current directory
+  if ! is_inside_git_repo; then
+    echo "Error: No valid Git repository found in the current directory."
+    exit 1
+  fi
+fi
+
+# Display directory structure using tree command
+echo "Directory structure:"
+git ls-tree -r --name-only HEAD  | tree --fromfile .
+
+# Display files in the repository
+echo "Files:"
+
+exclude_pattern="*[^.png] \
+*[^.jpg] \
+*[^.jpeg] \
+*[^.jpe] \
+*[^.jif] \
+*[^.jfif] \
+*[^.jfi] \
+*[^.jp2] \
+*[^.j2k] \
+*[^.jpf] \
+*[^.jpx] \
+*[^.jpm] \
+*[^.mj2] \
+*[^.jxr] \
+*[^.hdp] \
+*[^.wdp] \
+*[^.gif] \
+*[^.raw] \
+*[^.webp] \
+*[^.apng] \
+*[^.mng] \
+*[^.tiff] \
+*[^.tif] \
+*[^.svgz] \
+*[^.pdf] \
+*[^.bmp] \
+*[^.dib] \
+*[^.3dm] \
+*[^.max] \
+*[^.tmp] \
+*[^.cab] \
+*[^.msi] \
+*[^.msix] \
+*[^.msm] \
+*[^.msp] \
+*[^.lnk] \
+"
+
+include_pattern=""
+if [ "$1" != "" ]; then
+  include_pattern="-- $1"
+fi
+
+git ls-files $include_pattern | grep -v -E "$exclude_pattern" | xargs -I {} sh -c 'echo "{}"; echo \`\`\`; cat "{}"; echo \`\`\`\\n'
+
+# Return to the original directory
+cd "$original_dir"

@@ -122,7 +122,7 @@ function! chatgpt#delete_ansi_and_replace_hr(filepath)
   " Delete ANSI escape codes from the file
   call setbufline(bufnr(a:filepath), 1, map(getbufline(a:filepath, 1, '$'), {k,v -> substitute(v, '\%x1b\[[0-9;]*[a-zA-Z]', '', 'g')}))
   " Replace long horizontal lines with Markdown code block markers
-  call setbufline(bufnr(a:filepath), 1, map(getbufline(a:filepath, 1, '$'), {k,v -> substitute(v, '─\{3,}\s*$', '```', 'g')}))
+  call setbufline(bufnr(a:filepath), 1, map(getbufline(a:filepath, 1, '$'), {k,v -> substitute(v, '─\{3,}\([A-z]*\)?*\s*$', '```\1', 'g')}))
 endfunction
 
 " Function to create a diff within code blocks marked by triple backticks

@@ -47,43 +47,7 @@ git ls-tree -r --name-only HEAD  | tree --fromfile .
 # Display files in the repository
 echo "Files:"
 
-exclude_pattern="*[^.png] \
-*[^.jpg] \
-*[^.jpeg] \
-*[^.jpe] \
-*[^.jif] \
-*[^.jfif] \
-*[^.jfi] \
-*[^.jp2] \
-*[^.j2k] \
-*[^.jpf] \
-*[^.jpx] \
-*[^.jpm] \
-*[^.mj2] \
-*[^.jxr] \
-*[^.hdp] \
-*[^.wdp] \
-*[^.gif] \
-*[^.raw] \
-*[^.webp] \
-*[^.apng] \
-*[^.mng] \
-*[^.tiff] \
-*[^.tif] \
-*[^.svgz] \
-*[^.pdf] \
-*[^.bmp] \
-*[^.dib] \
-*[^.3dm] \
-*[^.max] \
-*[^.tmp] \
-*[^.cab] \
-*[^.msi] \
-*[^.msix] \
-*[^.msm] \
-*[^.msp] \
-*[^.lnk] \
-"
+exclude_pattern=".*\.(png|jpg|jpeg|jpe|jif|jfif|jfi|jp2|j2k|jpf|jpx|jpm|mj2|jxr|hdp|wdp|gif|raw|webp|apng|mng|tiff|tif|svgz|pdf|bmp|dib|3dm|max|tmp|cab|msi|msix|msm|msp|lnk)$"
 
 include_pattern=""
 if [ "$1" != "" ]; then

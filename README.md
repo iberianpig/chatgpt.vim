@@ -4,57 +4,50 @@ This Vim plugin allows users to interact directly with OpenAI's ChatGPT from wit
 
 ## Features
 
-- **Send Selected Code/Text:** Easily transmit selected lines of text to ChatGPT.
-- **Asynchronous Operations:** Utilize asynchronous job execution to keep the Vim editor responsive while waiting for ChatGPT's response.
-- **Session Logging:** Save ChatGPT session logs for future reference.
-- **Code Block Diffing:** Create diffs within code blocks to identify and review changes.
+- **Send Selected Code/Text:** Send selected lines of code or text and display ChatGPT's response in a split window to the right.
+- **Asynchronous Operations:** Maintain Vim editor responsiveness by utilizing asynchronous job execution while waiting for ChatGPT's response.
+- **Session Logging:** Save ChatGPT session logs to resume interactions at a later time.
+- **Code Block Diffing:** Create and review `diffthis` within code blocks enclosed by triple backticks.
+- **Text Expansion:** Utilize `%!{ command }` to expand the content of the text sent to ChatGPT.
 
-## Directory Structure
+The plugin includes the following utility commands:
 
+```bash
+# %!{ command } to customize and expand the content of the text sent to ChatGPT.
+
+# Display the file structure and contents within a local repository.
+$ cat-repo /path/to/local/repo
+
+# Retrieve and display comments from a GitHub Issue.
+$ gh-issue https://github.com/iberianpig/fusuma/issues/173 
+
+# Retrieve and display diffs and comments from a GitHub Pull Request.
+$ gh-pr http://github.com/iberianpig/chatgpt.vim/pulls/1 
 ```
-.
-├── autoload
-│   └── chatgpt.vim
-├── commands
-│   ├── cat-repo
-│   ├── gh-issue
-│   └── gh-pr
-└── plugin
-    └── chatgpt.vim
-```
 
-### File Overview
-
-- **autoload/chatgpt.vim**: Defines Vim functions for sending selected text to ChatGPT asynchronously, cleaning ANSI escape codes, and more.
-  
-- **commands/cat-repo**: Script to display files in a specified Git repository.
-
-- **commands/gh-issue**: Script to view a GitHub issue and its comments using the GitHub CLI.
-
-- **commands/gh-pr**: Script to view a GitHub pull request, view diffs, and comments.
-
-- **plugin/chatgpt.vim**: Contains the plugin settings and defines commands for interacting with ChatGPT and generating code block diffs.
 
 ## Requirements
 
 - Vim with support for job-control (`+job`).
-- [chatgpt-cli](https://github.com/kojix2/chatgpt-cli) installed and accessible in your system's PATH.
-- A valid OpenAI API key accessible by the kojix2/chatgpt-cli.
+- [kojix2/chatgpt-cli](https://github.com/kojix2/chatgpt-cli) installed and accessible in your system's PATH.
+- A valid OpenAI API key accessible by the [kojix2/chatgpt-cli](https://github.com/kojix2/chatgpt-cli)
 
 ## Installation
 
-1. **Install kojix2/chatgpt-cli:** Follow the installation instructions from the [kojix2/chatgpt-cli GitHub repository](https://github.com/kojix2/chatgpt-cli) and ensure it is in your system's PATH.
+### Install kojix2/chatgpt-cli
 
-2. **Clone the Plugin:**
+Follow the installation instructions from the [kojix2/chatgpt-cli GitHub repository](https://github.com/kojix2/chatgpt-cli) and ensure it is in your system's PATH.
+
+### Setup the Plugin
 
 Using [Vim-Plug](https://github.com/junegunn/vim-plug) or another Vim plugin manager, add the following to your `.vimrc` or `init.vim`:
 
 ```vim
-Plug 'your-username/vim-chatgpt'
+Plug 'iberianpig/chatgpt.vim'
 ```
 Run `:PlugInstall` within Vim.
 
-3. **Configuration:**
+**Configuration:**
    Add the following configurations to your Vim configuration file:
 
 ```vim
@@ -64,24 +57,28 @@ let g:chatgpt_model = 'gpt-4o'
 let g:chatgpt_system_marker = '-----🤖-----'
 let g:chatgpt_user_marker = '-----✍------'
 
-" Command to search ChatGPT session history
+" Send selected text to ChatGPT
+vnoremap ,a :ChatGPT<CR>
+" Send current buffer to ChatGPT
+noremap ,a :ChatGPT<CR>
+" Jump to ChatGPT session history
+noremap ,h :ChatGPTHistories!<CR>
+" Create a diff within a code block
+nnoremap ,d :call DiffWithinCodeBlock()<CR>
+```
+
+Below is the configuration for using [FZF](https://github.com/junegunn/fzf.vim) to search through ChatGPT session histories:
+
+```vim
+" Command for searching through ChatGPT session histories
 command! -bang -nargs=* ChatGPTHistories
      \ call fzf#vim#grep("rg --column --line-number --no-heading --color=always --smart-case --glob '*.md' ".shellescape(<q-args>), 1,
      \ fzf#vim#with_preview({'dir': expand('~/.config/chatgpt-cli/history'), 'options': ['--layout=reverse']}), <bang>0)
-
-" Mapping to send selected text to ChatGPT
-vnoremap ,a :ChatGPT<CR>
-" Mapping to activate ChatGPT in normal mode
-noremap ,a :ChatGPT<CR>
-" Mapping to view ChatGPT session history
-noremap ,h :ChatGPTHistories!<CR>
-" Mapping to create a diff within a code block
-nnoremap <leader>d :call DiffWithinCodeBlock()<CR>
 ```
 
 ## Troubleshooting
 
-- Ensure the [chatgpt commands](https://github.com/kojix2/chatgpt-cli/) are in your PATH. If not, check the path and adjust your shell configuration.
+- Ensure [chatgpt command](https://github.com/kojix2/chatgpt-cli/) is in your PATH. If not, check the path and adjust your shell configuration.
 - Review error logs in `/tmp/vim-chatgpt-err.log` for job errors.
 
 ## License

@@ -88,7 +88,7 @@ function! chatgpt#job_callback(outputfile, job, status) abort
 
   " If the job was unsuccessful, append an error message
   if a:status != 0
-    call setbufline(bufnr(a:outputfile), '$', [',' 'Chat GPT request failed', '', 'see /tmp/vim-chatgpt-err.log for details'])
+    call setbufline(bufnr(a:outputfile), '$', ['', 'Chat GPT request failed', '', 'see /tmp/vim-chatgpt-err.log for details'])
     return
   endif
 

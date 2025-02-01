@@ -18,6 +18,14 @@ is_inside_git_repo() {
   git rev-parse --is-inside-work-tree >/dev/null 2>&1
 }
 
+# Function to check if a file is binary
+isBinary() {
+    p=$(printf '%s\t-\t' -)
+    t=$(git diff --no-index --numstat /dev/null "$1")
+    case "$t" in "$p"*) return 0 ;; esac
+    return 1
+}
+
 # Save the current directory
 original_dir=$(pwd)
 
@@ -47,14 +55,21 @@ git ls-tree -r --name-only HEAD  | tree --fromfile .
 # Display files in the repository
 echo "Files:"
 
-exclude_pattern=".*\.(png|jpg|jpeg|jpe|jif|jfif|jfi|jp2|j2k|jpf|jpx|jpm|mj2|jxr|hdp|wdp|gif|raw|webp|apng|mng|tiff|tif|svgz|pdf|bmp|dib|3dm|max|tmp|cab|msi|msix|msm|msp|lnk)$"
-
 include_pattern=""
 if [ "$1" != "" ]; then
   include_pattern="-- $1"
 fi
 
-git ls-files $include_pattern | grep -v -E "$exclude_pattern" | xargs -I {} sh -c 'echo "{}"; echo \`\`\`; cat "{}"; echo \`\`\`\\n'
+git ls-files $include_pattern | while read file; do
+  if ! isBinary "$file"; then
+    echo "$file"
+    echo '```'
+    cat "$file"
+    echo '```'
+    echo
+  fi
+done
+
 
 # Return to the original directory
 cd "$original_dir"

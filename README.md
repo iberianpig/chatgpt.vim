@@ -25,6 +25,11 @@ $ gh-issue https://github.com/iberianpig/fusuma/issues/173
 $ gh-pr http://github.com/iberianpig/chatgpt.vim/pulls/1 
 ```
 
+```bash
+## You can also combine your favorite %!{ command } with ChatGPT to enhance your workflow.
+# Convert HTML retrieved with the curl command to markdown with html2markdown
+$ curl https://github.com/iberianpig/chatgpt.vim | html2markdown
+```
 
 ## Requirements
 

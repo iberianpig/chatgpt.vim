@@ -1,0 +1,84 @@
+*chatgpt.txt*    Vim ChatGPT Plugin
+
+==============================================================================
+CONTENTS                                                      *chatgpt-contents*
+
+    1. Introduction........................|chatgpt-introduction|
+    2. Features................................|chatgpt-features|
+    3. Commands..............................|chatgpt-commands|
+    4. Configuration.....................|chatgpt-configuration|
+    5. Troubleshooting..................|chatgpt-troubleshooting|
+    6. License.....................................|chatgpt-license|
+
+==============================================================================
+1. Introduction                                             *chatgpt-introduction*
+
+The Vim ChatGPT Plugin allows users to interact with OpenAI's ChatGPT AI model 
+from within their Vim editor. This plugin enables users to send text or code
+snippets to the AI and display its responses seamlessly within the editor.
+
+==============================================================================
+2. Features                                                  *chatgpt-features*
+
+- Send selected code/text to ChatGPT and view the response in a split window.
+- Utilize asynchronous operations to maintain Vim's responsiveness.
+- Save session logs to continue interactions later.
+- Create diffs within code blocks enclosed by triple backticks.
+- Expand text content dynamically using command filters (`%!{ command }`).
+
+==============================================================================
+3. Commands                                                 *chatgpt-commands*
+
+The plugin offers the following commands:
+
+|:ChatGPT|             Send selected lines to ChatGPT for processing.
+
+|:DiffWithinCodeBlock| Create a diff view within code blocks marked by backticks.
+
+|:Command name|        
+  :ChatGPTHistories    View ChatGPT session histories using FZF for search.
+
+Utilize shell commands within Vim for additional tasks:
+
+|commands/cat-repo|   Display repository structure and contents.
+
+|commands/gh-issue|   Retrieve and display comments from a GitHub issue.
+
+|commands/gh-pr|      Retrieve and display diffs/comments from a GitHub PR.
+
+==============================================================================
+4. Configuration                                           *chatgpt-configuration*
+
+Add the following lines to your `.vimrc` or `init.vim` to configure the plugin:
+
+```vim
+let g:chatgpt_system_message = 'Please summarize the following.'
+let g:chatgpt_model = 'gpt-4o'
+let g:chatgpt_system_marker = '-----🤖-----'
+let g:chatgpt_user_marker = '-----✍------'
+
+" Mapping for sending selected text
+vnoremap ,a :ChatGPT<CR>
+" Mapping for sending current buffer
+noremap ,a :ChatGPT<CR>
+" Jump to ChatGPT session history
+noremap ,h :ChatGPTHistories!<CR>
+" Create a diff within a code block
+nnoremap ,d :call DiffWithinCodeBlock()<CR>
+```
+
+Ensure that `kojix2/chatgpt-cli` is installed and available in your PATH.
+
+==============================================================================
+5. Troubleshooting                                      *chatgpt-troubleshooting*
+
+- Make sure the `chatgpt` command from `kojix2/chatgpt-cli` is accessible in your system's PATH.
+- If you encounter errors, check `/tmp/vim-chatgpt-err.log` for more details.
+
+==============================================================================
+6. License                                                        *chatgpt-license*
+
+This plugin is licensed under the MIT License. See the LICENSE file included in
+the distribution for more details.
+
+==============================================================================

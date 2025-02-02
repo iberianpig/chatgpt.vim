@@ -2,6 +2,8 @@
 
 This Vim plugin allows users to interact directly with OpenAI's ChatGPT from within their Vim text editor. It provides a convenient way to send code or text selections to ChatGPT and display responses within Vim.
 
+[![asciicast](https://asciinema.org/a/5GesY9uJe6BDL6pesN5B9dd36.svg)](https://asciinema.org/a/5GesY9uJe6BDL6pesN5B9dd36)
+
 ## Features
 
 - **Send Selected Code/Text:** Send selected lines of code or text and display ChatGPT's response in a split window to the right.

@@ -70,16 +70,36 @@ vnoremap ,a :ChatGPT<CR>
 " Send current buffer to ChatGPT
 noremap ,a :ChatGPT<CR>
 
-" Jump to ChatGPT session history
-noremap ,h :ChatGPTHistories!<CR>
-
 " Create a diff within a code block
 nnoremap ,d :DiffWithinCodeBlock<CR>
 ```
 
+## Session Log Storage
+
+This plugin saves the ChatGPT interaction session logs in the `~/.config/chatgpt-cli/history` directory. Two types of files will be saved in this directory:
+
+- **User Interaction Markdown File**:
+  - Format: `YYYYMMDDHHMMSS.response.md`
+  - Content: Records the requests sent by the user and the responses from ChatGPT in Markdown format. This file is easy to review and edit, making it convenient for retrospective examination.
+  - Example: `20250204130907.response.md`
+
+- **Session Data JSON File**:
+  - Format: `YYYYMMDDHHMMSS.response.md.post_data.json`
+  - Content: Contains detailed data about the requests sent to ChatGPT and the corresponding responses. This file is intended for internal system use, and direct editing is typically unnecessary.
+  - Example: `20250204130907.response.md.post_data.json`
+
+If the directory does not exist, the plugin will create it automatically, so no special configuration is needed.
+
+### Resuming ChatGPT Sessions from Logs
+
+To resume a ChatGPT session from a previous log, open the desired `*response.md` file.
+
 Below is the configuration for using [FZF](https://github.com/junegunn/fzf.vim) to search through ChatGPT session histories:
 
 ```vim
+" Jump to ChatGPT session history
+noremap ,h :ChatGPTHistories!<CR>
+
 " Command for searching through ChatGPT session histories
 command! -bang -nargs=* ChatGPTHistories
      \ call fzf#vim#grep("rg --column --line-number --no-heading --color=always --smart-case --glob '*.md' ".shellescape(<q-args>), 1,

@@ -6,4 +6,3 @@ let g:chatgpt_cli_command_paths = get(g:, 'chatgpt_cli_command_paths', expand('<
 
 command! -range=% ChatGPT call chatgpt#send_selected_range(<line1>, <line2>)
 command! DiffWithinCodeBlock :call chatgpt#diff_within_code_block()
-nnoremap <leader>d :call chatgpt#diff_within_code_block()<CR>

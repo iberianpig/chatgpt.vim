@@ -66,12 +66,15 @@ let g:chatgpt_user_marker = '-----✍------'
 
 " Send selected text to ChatGPT
 vnoremap ,a :ChatGPT<CR>
+
 " Send current buffer to ChatGPT
 noremap ,a :ChatGPT<CR>
+
 " Jump to ChatGPT session history
 noremap ,h :ChatGPTHistories!<CR>
+
 " Create a diff within a code block
-nnoremap ,d :call DiffWithinCodeBlock()<CR>
+nnoremap ,d :DiffWithinCodeBlock<CR>
 ```
 
 Below is the configuration for using [FZF](https://github.com/junegunn/fzf.vim) to search through ChatGPT session histories:

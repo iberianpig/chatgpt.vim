@@ -12,27 +12,6 @@ This Vim plugin allows users to interact directly with OpenAI's ChatGPT from wit
 - **Code Block Diffing:** Create and review `diffthis` within code blocks enclosed by triple backticks.
 - **Text Expansion:** Utilize `%!{ command }` to expand the content of the text sent to ChatGPT.
 
-The plugin includes the following utility commands:
-
-```bash
-# %!{ command } to customize and expand the content of the text sent to ChatGPT.
-
-# Display the file structure and contents within a local repository.
-$ cat-repo /path/to/local/repo
-
-# Retrieve and display comments from a GitHub Issue.
-$ gh-issue https://github.com/iberianpig/fusuma/issues/173 
-
-# Retrieve and display diffs and comments from a GitHub Pull Request.
-$ gh-pr http://github.com/iberianpig/chatgpt.vim/pulls/1 
-```
-
-```bash
-## You can also combine your favorite %!{ command } with ChatGPT to enhance your workflow.
-# Convert HTML retrieved with the curl command to markdown with html2markdown
-$ curl https://github.com/iberianpig/chatgpt.vim | html2markdown
-```
-
 ## Requirements
 
 - Vim with support for job-control (`+job`).
@@ -105,6 +84,80 @@ command! -bang -nargs=* ChatGPTHistories
      \ call fzf#vim#grep("rg --column --line-number --no-heading --color=always --smart-case --glob '*.md' ".shellescape(<q-args>), 1,
      \ fzf#vim#with_preview({'dir': expand('~/.config/chatgpt-cli/history'), 'options': ['--layout=reverse']}), <bang>0)
 ```
+
+## Utility Command Usage
+
+This plugin includes several utility commands that can be executed within Vim to enhance your workflow. These commands can be run in Markdown files using the `%!{}` syntax.
+
+### 1. `cat-repo`
+
+The `cat-repo` command displays the files in a specified Git repository.
+
+**Usage in Markdown**:
+```markdown
+%!{ cat-repo [REPO_PATH] [PATTERN] }
+```
+
+- **REPO_PATH** (optional): The path to the Git repository. If not provided, the current directory is used.
+- **PATTERN** (optional): Only files matching the given pattern will be processed.
+
+**Example**:
+```markdown
+%!{ cat-repo /path/to/repo "*.py" }
+```
+This command will list all Python files in the specified repository and insert the output directly into your document.
+
+### 2. `gh-issue`
+
+You need to install [gh](https://cli.github.com/) to use this command.
+
+The `gh-issue` command retrieves and displays comments from a specified GitHub issue.
+
+**Usage in Markdown**:
+```markdown
+%!{ gh-issue <GitHub Issue URL> }
+```
+
+**Example**:
+```markdown
+%!{ gh-issue https://github.com/iberianpig/fusuma/issues/173 }
+```
+This command will fetch the details and comments of the specified issue and insert them into your document.
+
+### 3. `gh-pr`
+
+The `gh-pr` command retrieves and displays diffs and comments from a specified GitHub pull request.
+
+**Usage in Markdown**:
+```markdown
+%!{ gh-pr <GitHub PR URL> }
+```
+
+**Example**:
+```markdown
+%!{ gh-pr https://github.com/iberianpig/chatgpt.vim/pulls/1 }
+```
+This command will fetch the details and comments of the specified pull request, along with the diff if the number of lines is below the threshold, and insert them into your document.
+
+### Custom Commands
+
+**require 'html2markdown'**
+
+see: https://github.com/JohannesKaufmann/html-to-markdown
+
+#### curl <URL> | html2markdown | html2markdown | chatgpt
+To fetch HTML from a URL and convert it to Markdown, you can use:
+
+**Example**:
+```markdown
+%!{ curl https://github.com/iberianpig/chatgpt.vim | html2markdown }
+```
+This command retrieves the HTML content from the specified URL and converts it into Markdown format, which will then be inserted into your document.
+
+### Notes
+
+- Ensure that both `curl` and `html2markdown` are installed and accessible in your system's PATH.
+- This method is beneficial for quickly converting web content into a more editable format for use within your Markdown files.
 
 ## Troubleshooting
 

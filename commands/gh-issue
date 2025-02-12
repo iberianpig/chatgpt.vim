@@ -2,7 +2,7 @@
 
 if [ "$1" != "" ]; then
   # Check if it is a GitHub issue URL
-  pattern="^https://github.*/.*/issues/[0-9]+$"
+  pattern="^https://github.*/.*/issues/[0-9]+"
   if [[ $1 =~ $pattern ]]; then
     issue=$1
   else

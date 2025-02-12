@@ -1,9 +1,4 @@
 function! chatgpt#send_selected_range(startline, endline) abort
-  " Append the CLI path to system $PATH if not already included
-  if $PATH !~ g:chatgpt_cli_command_paths
-    let $PATH .= ':' . g:chatgpt_cli_command_paths
-  endif
-
   let l:command = 'chatgpt -M ' . g:chatgpt_model
 
   let l:startline = a:startline

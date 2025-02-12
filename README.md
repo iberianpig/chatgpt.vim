@@ -87,7 +87,19 @@ command! -bang -nargs=* ChatGPTHistories
 
 ## Utility Command Usage
 
-This plugin includes several utility commands that can be executed within Vim to enhance your workflow. These commands can be run in Markdown files using the `%!{}` syntax.
+This plugin includes several utility commands that can be executed within Vim. 
+
+These commands act as simple command-line interfaces and can be sent to ChatGPT using the `%!{COMMAND}` syntax. This allows you to write commands in the current buffer or within the `response.md` file used for ChatGPT sessions, and execute them to send the expanded contents to ChatGPT.
+
+Additionally, you can use `:r !COMMAND` to inline insert results at the current cursor position.
+(This is a built-in Vim feature and not specific to this plugin.)
+
+
+### Example Custom Commands
+
+- **`cat-repo`**: Displays files in a specified Git repository.
+- **`gh-issue`**: Retrieves and displays comments from a specified GitHub issue.
+- **`gh-pr`**: Retrieves and displays diffs and comments from a specified GitHub pull request.
 
 ### 1. `cat-repo`
 

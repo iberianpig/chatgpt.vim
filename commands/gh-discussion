@@ -1,0 +1,52 @@
+#!/bin/bash
+
+if [ "$1" != "" ]; then
+  pattern="^https://github.com/([^/]+)/([^/]+)/discussions/([0-9]+)"
+  if [[ $1 =~ $pattern ]]; then
+    owner="${BASH_REMATCH[1]}"
+    repo="${BASH_REMATCH[2]}"
+    number="${BASH_REMATCH[3]}"
+  else
+    echo "Invalid URL"
+    exit 1
+  fi
+else
+  echo "Usage: $0"
+  echo "  $0 <GitHub Discussion URL>"
+  exit 1
+fi
+
+response=$(gh api graphql -f owner="$owner" -f repo="$repo" -F number="$number" -f query='
+query($owner: String!, $repo: String!, $number: Int!) {
+  repository(owner: $owner, name: $repo) {
+    discussion(number: $number) {
+      title
+      body
+      author {
+        login
+      }
+      comments(first: 100) {
+        nodes {
+          author {
+            login
+          }
+          body
+          createdAt
+        }
+        totalCount
+      }
+    }
+  }
+}')
+
+echo "---"
+echo "Discussion Title"
+echo "$response" | jq -r '.data.repository.discussion.title'
+echo "Author: $(echo "$response" | jq -r .data.repository.discussion.author.login)"
+echo "Body:"
+echo "$response" | jq -r '.data.repository.discussion.body'
+echo "---"
+echo "Comment Count: $(echo "$response" | jq -r .data.repository.discussion.comments.totalCount)"
+
+echo "Comment:"
+echo "$response" | jq -r '.data.repository.discussion.comments.nodes[] | "\(.createdAt) - \(.author.login): \(.body)"'

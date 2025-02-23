@@ -100,6 +100,7 @@ Additionally, you can use `:r !COMMAND` to inline insert results at the current 
 - **`cat-repo`**: Displays files in a specified Git repository.
 - **`gh-issue`**: Retrieves and displays comments from a specified GitHub issue.
 - **`gh-pr`**: Retrieves and displays diffs and comments from a specified GitHub pull request.
+- **`gh-discussion`**: Fetches details from a specified GitHub discussion.
 
 ### 1. `cat-repo`
 
@@ -151,6 +152,20 @@ The `gh-pr` command retrieves and displays diffs and comments from a specified G
 ```
 This command will fetch the details and comments of the specified pull request, along with the diff if the number of lines is below the threshold, and insert them into your document.
 
+### 4. `gh-discussion`
+
+The `gh-discussion` command fetches details from a specified GitHub discussion.
+
+**Usage**:
+```
+%!{gh-discussion <GitHub Discussion URL>}
+```
+
+**Example**:
+```
+%!{gh-discussion https://github.com/iberianpig/chatgpt.vim/discussions/1}
+```
+This command will retrieve the discussion title, author, body, and comments from the specified discussion.
 ### Custom Commands
 
 **require 'html2markdown'**

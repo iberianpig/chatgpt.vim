@@ -42,6 +42,8 @@ Utilize shell commands within Vim for additional tasks:
 
 |commands/cat-repo|   Display repository structure and contents.
 
+|commands/gh-discussion| Fetch details from a specified GitHub discussion.
+
 |commands/gh-issue|   Retrieve and display comments from a GitHub issue.
 
 |commands/gh-pr|      Retrieve and display diffs/comments from a GitHub PR.

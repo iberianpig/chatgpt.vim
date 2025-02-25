@@ -1,43 +1,69 @@
 #!/bin/bash
 
+# Check if a GitHub PR URL is provided as an argument
 if [ "$1" != "" ]; then
   pattern="^https://github.*/.*pull/[0-9]+"
   # Check if it is a GitHub pull request URL
   if [[ $1 =~ $pattern ]]; then
     pull=$1
   else
-    echo "Invalid URL"
+    echo "Invalid URL"  # Display an error message if URL is invalid
     exit 1
   fi
 else
-  echo "Usage: $0"
+  echo "Usage: $0"  # Display usage message if no argument is provided
   echo "  $0 <GitHub PR URL>"
   exit 1
 fi
 
+# Display the PR information
 echo "---"
 echo "gh pr view $pull"
 echo "---"
-gh pr view $pull
+gh pr view $pull  # Execute command to view the PR
 
+# Display the diff of the PR
 echo "---"
 echo "gh pr diff $pull"
 echo "---"
-# Measure the number of lines in the diff
-diff_output=$(gh pr diff $pull)
-diff_lines=$(echo "$diff_output" | wc -l)
+diff_output=$(gh pr diff $pull)  # Get the diff
 
-# Check if the number of lines exceeds the threshold
-threshold=1000  # Threshold for the allowable number of lines
-if [ "$diff_lines" -gt "$threshold" ]; then
-  echo "Diff is too large ($diff_lines lines). Ignoring..."
-else
-  echo \`\`\`diff
-  echo "$diff_output"
-  echo \`\`\`
-fi
+# Create a temporary file
+tmp_file=$(mktemp)
 
+# Write diff_output to the temporary file
+echo "$diff_output" > "$tmp_file"
+
+# Use csplit to split the temporary file
+csplit -z -f "$tmp_file" -b "%d.txt" "$tmp_file" '/^diff /' '{*}' > /dev/null
+
+# Check the character count of each split file and ignore those over threshold
+threshold=1000  # Character threshold
+for file in "$tmp_file"*; do
+  char_count=$(wc -m < "$file")  # Calculate character count
+
+  if [ "$char_count" -gt "$threshold" ]; then
+    echo \`\`\`diff
+    head -n 1 "$file"
+    echo "skipped"
+    echo "large diff file ($char_count characters)"
+    echo \`\`\`
+
+    rm "$file"  # Delete files that are too large
+  else
+
+    echo \`\`\`diff
+    cat "$file"  # Display the contents of the file
+    echo \`\`\`
+    echo ""
+  fi
+done
+
+# Delete the temporary files
+rm "$tmp_file"*
+
+# Display the comments of the PR
 echo "---"
 echo "gh pr view --comments $pull"
 echo "---"
-gh pr view --comments $pull
+gh pr view --comments $pull  # Execute command to view comments on the PR

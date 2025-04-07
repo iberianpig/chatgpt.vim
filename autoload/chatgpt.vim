@@ -42,7 +42,14 @@ function! chatgpt#send_selected_range(startline, endline) abort
 
   " Create a timestamp for session logging and ensure directory exists
   let l:timestamp = strftime("%Y%m%d%H%M%S")
-  let l:directory = expand('~/.config/chatgpt-cli/history')
+  " find the git root directory
+  let l:git_root = trim(system('git rev-parse --show-toplevel 2> /dev/null'))
+  if v:shell_error == 0 && l:git_root != ''
+    " If in a git repository, use the git root directory for history
+    let l:directory = l:git_root . '/.chatgpt_history'
+  else
+    let l:directory = expand('~/.config/chatgpt-cli/history')
+  endif
   if !isdirectory(l:directory)
     call mkdir(l:directory, "p")
   endif

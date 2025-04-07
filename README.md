@@ -55,7 +55,15 @@ nnoremap ,d :DiffWithinCodeBlock<CR>
 
 ## Session Log Storage
 
-This plugin saves the ChatGPT interaction session logs in the `~/.config/chatgpt-cli/history` directory. Two types of files will be saved in this directory:
+ChatGPT interaction logs are automatically saved in a directory determined by your environment:
+
+- **Inside a Git Repository:**  
+  The plugin detects if the current file is part of a Git repo. If so, it creates (if necessary) a special `.chatgpt_history` directory at the repo's root and stores the session logs there.
+  
+- **Outside a Git Repository:**  
+  Session logs are stored in `~/.config/chatgpt-cli/history`.
+
+Two types of files are created:
 
 - **User Interaction Markdown File**:
   - Format: `YYYYMMDDHHMMSS.response.md`

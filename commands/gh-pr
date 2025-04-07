@@ -1,17 +1,18 @@
 #!/bin/bash
 
-# Check if a GitHub PR URL is provided as an argument
 if [ "$1" != "" ]; then
-  pattern="^https://github.*/.*pull/[0-9]+"
-  # Check if it is a GitHub pull request URL
+  pattern="^https://github.com/([^/]+)/([^/]+)/pull/([0-9]+)"
   if [[ $1 =~ $pattern ]]; then
     pull=$1
+    owner="${BASH_REMATCH[1]}"
+    repo="${BASH_REMATCH[2]}"
+    number="${BASH_REMATCH[3]}"
   else
-    echo "Invalid URL"  # Display an error message if URL is invalid
+    echo "Invalid URL"
     exit 1
   fi
 else
-  echo "Usage: $0"  # Display usage message if no argument is provided
+  echo "Usage: $0"
   echo "  $0 <GitHub PR URL>"
   exit 1
 fi
@@ -37,21 +38,23 @@ echo "$diff_output" > "$tmp_file"
 # Use csplit to split the temporary file
 csplit -z -f "$tmp_file" -b "%d.txt" "$tmp_file" '/^diff /' '{*}' > /dev/null
 
-# Check the character count of each split file and ignore those over threshold
-threshold=1000  # Character threshold
+# Set thresholds
+char_threshold=10000  # Character count threshold
+line_length_threshold=1000  # Line length threshold
+
 for file in "$tmp_file"*; do
   char_count=$(wc -m < "$file")  # Calculate character count
+  longest_line=$(wc -L < "$file")  # Calculate the length of the longest line
 
-  if [ "$char_count" -gt "$threshold" ]; then
+  if [ "$char_count" -gt "$char_threshold" ] || [ "$longest_line" -gt "$line_length_threshold" ]; then
     echo \`\`\`diff
     head -n 1 "$file"
     echo "skipped"
-    echo "large diff file ($char_count characters)"
+    echo "large diff file (characters: $char_count, longest line: $longest_line characters)"
     echo \`\`\`
 
     rm "$file"  # Delete files that are too large
   else
-
     echo \`\`\`diff
     cat "$file"  # Display the contents of the file
     echo \`\`\`
@@ -67,3 +70,9 @@ echo "---"
 echo "gh pr view --comments $pull"
 echo "---"
 gh pr view --comments $pull  # Execute command to view comments on the PR
+
+echo "---"
+echo "gh pr view $pull --json number,title,body,reviews,assignees,commits --jq '{number, title, body, reviews, assignees,commits: [.commits[] | {messageHeadline: .messageHeadline, messageBody: .messageBody}], comments}'" 
+echo "---"
+
+gh api -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" /repos/$owner/$repo/pulls/$number/comments --jq '.[] | {path: .path, position: .position, body: .body, diff_hunk: .diff_hunk, commit_id: .commit_id}'

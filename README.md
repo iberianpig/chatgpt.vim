@@ -103,7 +103,7 @@ Additionally, you can use `:r !COMMAND` to inline insert results at the current 
 (This is a built-in Vim feature and not specific to this plugin.)
 
 
-### Example Custom Commands
+### Built-in Commands
 
 - **`cat-repo`**: Displays files in a specified Git repository.
 - **`gh-issue`**: Retrieves and displays comments from a specified GitHub issue.

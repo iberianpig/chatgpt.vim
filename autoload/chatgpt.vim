@@ -46,22 +46,21 @@ function! chatgpt#send_selected_range(startline, endline) abort
   let l:git_root = trim(system('git rev-parse --show-toplevel 2> /dev/null'))
   if v:shell_error == 0 && l:git_root != ''
     " If in a git repository, use the git root directory for history
-    let l:directory = l:git_root . '/.chatgpt_history'
+    let l:base_directory = l:git_root . '/.chatgpt_history'
   else
-    let l:directory = expand('~/.config/chatgpt-cli/history')
-  endif
-  if !isdirectory(l:directory)
-    call mkdir(l:directory, "p")
+    let l:base_directory = expand('~/.config/chatgpt-cli/history')
   endif
 
-  " Determine response output file; handle opening for editing
   let l:current_file = expand('%:p')
-  if l:current_file =~# l:directory . '/.*\.response\.md$'
+  if l:current_file =~# l:base_directory . '/.*\.response\.md$'
     exec 'edit ' . l:current_file
+
     let l:outputfile = l:current_file
     call append(line('$'), ["", g:chatgpt_system_marker, ""])
   else
-    let l:outputfile = l:directory . '/' . l:timestamp . '.response.md'
+    let l:new_dir = l:base_directory . '/' . l:timestamp
+    call mkdir(l:new_dir, "p")
+    let l:outputfile = l:new_dir . '/' . 'chatgpt' . '.response.md'
     exec 'vsplit ' . l:outputfile
     call setline(1, [l:system_message, "", g:chatgpt_system_marker, ""])
     exec 'wincmd p'

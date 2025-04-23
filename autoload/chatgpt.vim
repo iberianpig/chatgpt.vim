@@ -125,17 +125,17 @@ endfunction
 
 " Function to create a diff within code blocks marked by triple backticks
 function! chatgpt#diff_within_code_block()
-  let l:start_line = search('^```', 'bnW')
-  let l:end_line = search('^```', 'nW')
+  let l:startline = search('^```', 'bnW')
+  let l:endline = search('^```', 'nW')
 
   " Check if code block exists
-  if l:start_line == 0 || l:end_line == 0
+  if l:startline == 0 || l:endline == 0
     echoerr " No code block found. Please check your cursor position."
     return
   endif
 
   " Retrieve the lines of the code block
-  let l:code_block = getline(l:start_line + 1, l:end_line - 1)
+  let l:code_block = getline(l:startline + 1, l:endline - 1)
   let l:buffer_name = 'code_block'
   let l:buffer_number = bufnr(l:buffer_name)
 

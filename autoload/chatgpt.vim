@@ -40,18 +40,23 @@ function! chatgpt#send_selected_range(startline, endline) abort
     let l:command = l:command . ' -s ' . '"' . l:system_message . '"'
   endif
 
+  let l:current_file = expand('%:p')
   " Create a timestamp for session logging and ensure directory exists
   let l:timestamp = strftime("%Y%m%d%H%M%S")
   " find the git root directory
-  let l:git_root = trim(system('git rev-parse --show-toplevel 2> /dev/null'))
-  if v:shell_error == 0 && l:git_root != ''
-    " If in a git repository, use the git root directory for history
-    let l:base_directory = l:git_root . '/.chatgpt_history'
+
+  if l:current_file =~# '\.response\.md$'
+    let l:base_directory = fnamemodify(l:current_file, ':h')
   else
-    let l:base_directory = expand('~/.config/chatgpt-cli/history')
+    let l:git_root = trim(system('git rev-parse --show-toplevel 2> /dev/null'))
+    if v:shell_error == 0 && l:git_root != ''
+      " If in a git repository, use the git root directory for history
+      let l:base_directory = l:git_root . '/.chatgpt_history'
+    else
+      let l:base_directory = expand('~/.config/chatgpt-cli/history')
+    endif
   endif
 
-  let l:current_file = expand('%:p')
   if l:current_file =~# l:base_directory . '/.*\.response\.md$'
     exec 'edit ' . l:current_file
 

@@ -1,3 +1,20 @@
+" Completion function for agent selection
+function! chatgpt#agent_completion(ArgLead, CmdLine, CursorPos) abort
+  let l:agents = keys(g:chatgpt_agents)
+  if a:ArgLead == ''
+    return l:agents
+  endif
+  return filter(l:agents, 'v:val =~ "^" . a:ArgLead')
+endfunction
+
+" Get system message for an agent
+function! chatgpt#get_agent_message(agent) abort
+  if has_key(g:chatgpt_agents, a:agent)
+    return g:chatgpt_agents[a:agent]
+  endif
+  return a:agent
+endfunction
+
 function! chatgpt#send_selected_range(startline, endline) abort
   let l:command = 'chatgpt -M ' . g:chatgpt_model
 
@@ -18,10 +35,10 @@ function! chatgpt#send_selected_range(startline, endline) abort
     endif
     let l:startline = l:markerline + 1
   else
-    " Prompt for a system message when no resume file is found
+    " Prompt for agent selection or custom system message when no resume file is found
     try
       cnoremap <buffer> <silent> <Esc> __CANCELED__<CR>
-      let l:input = input('System Message: ', '', 'customlist,ConfirmCompletion')
+      let l:input = input('System Message (or agent: ' . join(keys(g:chatgpt_agents), '/') . '): ', '', 'customlist,chatgpt#agent_completion')
       let l:input = l:input =~# '__CANCELED__$' ? 0 : l:input
     catch /^Vim:Interrupt$/
       let l:input = -1
@@ -35,8 +52,13 @@ function! chatgpt#send_selected_range(startline, endline) abort
       endif
     endtry
 
-    " Use the provided system message or a default one
-    let l:system_message = l:input ==# '' ? g:chatgpt_system_message : shellescape(l:input, 1)
+    " Use the provided system message, agent message, or a default one
+    if l:input ==# ''
+      let l:system_message = g:chatgpt_system_message
+    else
+      let l:agent_message = chatgpt#get_agent_message(l:input)
+      let l:system_message = shellescape(l:agent_message, 1)
+    endif
     let l:command = l:command . ' -s ' . '"' . l:system_message . '"'
   endif
 

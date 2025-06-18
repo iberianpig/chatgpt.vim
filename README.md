@@ -11,6 +11,7 @@ This Vim plugin allows users to interact directly with OpenAI's ChatGPT from wit
 - **Session Logging:** Save ChatGPT session logs to resume interactions at a later time.
 - **Code Block Diffing:** Create and review `diffthis` within code blocks enclosed by triple backticks.
 - **Text Expansion:** Utilize `%!{ command }` to expand the content of the text sent to ChatGPT.
+- **Agent Selection:** Quick agent selection with tab completion for different AI personas (coder, reviewer, committer, etc.).
 
 ## Requirements
 
@@ -43,6 +44,15 @@ let g:chatgpt_model = 'gpt-4o'
 let g:chatgpt_system_marker = '-----🤖-----'
 let g:chatgpt_user_marker = '-----✍------'
 
+" Define custom agents with their system messages
+let g:chatgpt_agents = {
+      \ 'coder': 'You are a helpful coding assistant. Provide clear, concise, and well-commented code solutions.',
+      \ 'reviewer': 'You are a code reviewer. Analyze the code for potential issues, best practices, and provide constructive feedback.',
+      \ 'committer': 'You are a git commit message writer. Create clear, concise commit messages following conventional commit standards.',
+      \ 'summarizer': 'Please summarize the following.',
+      \ 'translator': 'Translate the following text to Japanese.',
+      \ }
+
 " Send selected text to ChatGPT
 vnoremap ,a :ChatGPT<CR>
 
@@ -52,6 +62,25 @@ noremap ,a :ChatGPT<CR>
 " Create a diff within a code block
 nnoremap ,d :DiffWithinCodeBlock<CR>
 ```
+
+### Agent Selection
+
+When starting a new ChatGPT session, you'll be prompted with:
+```
+System Message (or agent: coder/reviewer/committer/summarizer):
+```
+
+You can:
+- **Type an agent name** and press Tab for completion (e.g., `cod<Tab>` → `coder`)
+- **Select a predefined agent** to use its specialized system message
+- **Enter a custom system message** directly
+
+Available default agents:
+- `coder`: Helpful coding assistant
+- `reviewer`: Code review and best practices analysis
+- `committer`: Git commit message writer
+- `summarizer`: Content summarization
+- `translator`: Japanese translation (customizable in config)
 
 ## Session Log Storage
 

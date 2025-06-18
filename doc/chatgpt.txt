@@ -25,6 +25,7 @@ snippets to the AI and display its responses seamlessly within the editor.
 - Save session logs to continue interactions later.
 - Create diffs within code blocks enclosed by triple backticks.
 - Expand text content dynamically using command filters (`%!{ command }`).
+- Quick agent selection with tab completion for different AI personas.
 
 ==============================================================================
 3. Commands                                                 *chatgpt-commands*
@@ -59,6 +60,14 @@ let g:chatgpt_model = 'gpt-4o'
 let g:chatgpt_system_marker = '-----🤖-----'
 let g:chatgpt_user_marker = '-----✍------'
 
+" Define custom agents with their system messages
+let g:chatgpt_agents = {
+      \ 'coder': 'You are a helpful coding assistant.',
+      \ 'reviewer': 'You are a code reviewer.',
+      \ 'committer': 'You are a git commit message writer.',
+      \ 'summarizer': 'Please summarize the following.',
+      \ }
+
 " Mapping for sending selected text
 vnoremap ,a :ChatGPT<CR>
 " Mapping for sending current buffer
@@ -68,6 +77,9 @@ noremap ,h :ChatGPTHistories!<CR>
 " Create a diff within a code block
 nnoremap ,d :call DiffWithinCodeBlock()<CR>
 ```
+
+Agent Selection: When starting a new session, you'll be prompted to select an
+agent or enter a custom system message. Use Tab for agent name completion.
 
 Ensure that `kojix2/chatgpt-cli` is installed and available in your PATH.
 
